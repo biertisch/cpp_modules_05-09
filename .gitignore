@@ -1,1 +1,6 @@
+.vscode
 *.pdf
+*.o
+*.d
+*obj
+*bureaucrat

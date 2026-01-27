@@ -18,7 +18,6 @@ void alterTryCatch(Bureaucrat *vogon, void (Bureaucrat::*func)(int n), int nb = 
 		(vogon->*func)(nb);
 		std::cout << *vogon << '\n';
 	}
-
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
@@ -33,7 +32,6 @@ Bureaucrat* createTryCatch(const std::string& name, int grade)
 		std::cout << *vogon << '\n';
 		return vogon;
 	}
-
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;

@@ -23,8 +23,8 @@ void alterTryCatch(Bureaucrat *vogon, void (Bureaucrat::*func)(int n), int nb = 
 	}
 }
 
-Bureaucrat* createTryCatch(const std::string& name, int grade) {
-
+Bureaucrat* createTryCatch(const std::string& name, int grade)
+{
 	try {
 		Bureaucrat* vogon = new Bureaucrat(name, grade);
 		std::cout << *vogon << '\n';
@@ -37,8 +37,8 @@ Bureaucrat* createTryCatch(const std::string& name, int grade) {
 	}
 }
 
-int main() {
-
+int main()
+{
 	printSection("CREATING BUREAUCRATS");
 	Bureaucrat* a = createTryCatch("a", 1);
 	Bureaucrat* b = createTryCatch("b", 150);

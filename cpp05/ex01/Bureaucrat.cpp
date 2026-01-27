@@ -25,6 +25,22 @@ Bureaucrat& Bureaucrat::operator=(const Bureaucrat& other)
 	return *this;
 }
 
+Bureaucrat& Bureaucrat::operator++()
+{
+	if (_grade <= 1)
+		throw GradeTooHighException();
+	_grade--;
+	return *this;
+}
+
+Bureaucrat& Bureaucrat::operator--()
+{
+	if (_grade >= 150)
+		throw GradeTooLowException();
+	_grade++;
+	return *this;
+}
+
 const std::string& Bureaucrat::getName() const
 {
 	return _name;
@@ -33,20 +49,6 @@ const std::string& Bureaucrat::getName() const
 int Bureaucrat::getGrade() const
 {
 	return _grade;
-}
-
-void Bureaucrat::incrementGrade(int nbIncrement)
-{
-	if (_grade - nbIncrement < 1)
-		throw GradeTooHighException();
-	_grade -= nbIncrement;
-}
-
-void Bureaucrat::decrementGrade(int nbDecrement)
-{
-	if (_grade + nbDecrement > 150)
-		throw GradeTooLowException();
-	_grade += nbDecrement;
 }
 
 bool Bureaucrat::signForm(Form& form) const

@@ -8,15 +8,29 @@ void printSection(const std::string& title)
 	std::cout << std::string(width, '=') << '\n';
 }
 
-void alterTryCatch(Bureaucrat *vogon, void (Bureaucrat::*func)(int n), int nb = 1)
+void decrementTryCatch(Bureaucrat *vogon)
 {
 	if (!vogon)
 		return;
-
 	try
 	{
-		(vogon->*func)(nb);
-		std::cout << *vogon << '\n';
+		--(*vogon);
+		std::cout << "Demoted: " << *vogon << '\n';
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+}
+
+void incrementTryCatch(Bureaucrat *vogon)
+{
+	if (!vogon)
+		return;
+	try
+	{
+		++(*vogon);
+		std::cout << "Promoted: " << *vogon << '\n';
 	}
 	catch (const std::exception& e)
 	{
@@ -48,11 +62,13 @@ int main()
 	Bureaucrat* d = createTryCatch("d", 151); // grade too low
 
 	printSection("INCREMENTING & DECREMENTING GRADES");
-	alterTryCatch(a, &Bureaucrat::decrementGrade);
-	alterTryCatch(a, &Bureaucrat::incrementGrade);
-	alterTryCatch(a, &Bureaucrat::incrementGrade); // grade too high
-	alterTryCatch(b, &Bureaucrat::incrementGrade, 5);
-	alterTryCatch(b, &Bureaucrat::decrementGrade, 50); // grade too low
+	decrementTryCatch(a);
+	incrementTryCatch(a);
+	incrementTryCatch(a); // grade too high
+	incrementTryCatch(b);
+	decrementTryCatch(b);
+	decrementTryCatch(b); // grade too low
+	decrementTryCatch(b); // grade too low
 
 	// free memory
 	delete a;

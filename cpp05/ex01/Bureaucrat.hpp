@@ -21,12 +21,11 @@ class Bureaucrat
 		~Bureaucrat();
 
 		Bureaucrat& operator=(const Bureaucrat& other);
+		Bureaucrat& operator++();
+		Bureaucrat& operator--();
 
 		const std::string& getName() const;
 		int getGrade() const;
-
-		void incrementGrade(int nbIncrement = 1);
-		void decrementGrade(int nbDecrement = 1);
 
 		bool signForm(Form& form) const;
 

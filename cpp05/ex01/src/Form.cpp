@@ -85,6 +85,6 @@ std::ostream& operator<<(std::ostream& os, const Form& f)
 	if (f.getStatus())
 		std::cout << ", signed.";
 	else
-		std::cout << ", not signed.";
+		std::cout << ", unsigned.";
 	return os;
 }

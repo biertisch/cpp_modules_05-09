@@ -1,13 +1,17 @@
 NAME		=	bureaucrat
 
-SRC			=	main.cpp Bureaucrat.cpp
+SRC_FILES	=	main Bureaucrat
 
+SRC_DIR		=	src/
 OBJ_DIR		=	obj/
-OBJ			=	$(patsubst %.cpp, $(OBJ_DIR)%.o, $(SRC))
-DEP			=	$(patsubst %.cpp, $(OBJ_DIR)%.d, $(SRC))
+INC_DIR		=	include/
+
+SRC			=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(SRC_FILES)))
+OBJ			=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC_FILES)))
+DEP			=	$(addprefix $(OBJ_DIR), $(addsuffix .d, $(SRC_FILES)))
 
 CXX			=	c++
-CXXFLAGS	=	-Wall -Werror -Wextra -g -std=c++98 -MMD -MP
+CXXFLAGS	=	-Wall -Werror -Wextra -g -std=c++98 -MMD -MP -I$(INC_DIR)
 VAL			=	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
 RM			=	rm -rf
 
@@ -18,7 +22,7 @@ $(NAME): $(OBJ)
 	@$(CXX) $^ -o $@
 	@echo "$(NAME) built!"
 
-$(OBJ_DIR)%.o: %.cpp | $(OBJ_DIR)
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp | $(OBJ_DIR)
 	@echo "Compiling $<"
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 

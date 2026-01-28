@@ -1,14 +1,5 @@
 #include "Form.hpp"
 
-Form::Form() :
-	_name("useless form"),
-	_signGrade(150),
-	_execGrade(150),
-	_signed(false)
-{
-
-}
-
 Form::Form(const std::string& name, const int signGrade, const int execGrade) :
 	_name(name),
 	_signGrade(signGrade),
@@ -25,10 +16,7 @@ Form::Form(const Form& other) :
 	_name(other._name),
 	_signGrade(other._signGrade),
 	_execGrade(other._execGrade),
-	_signed(false)
-{
-
-}
+	_signed(false) {}
 
 Form::~Form() {}
 
@@ -62,29 +50,37 @@ bool Form::getStatus() const
 
 void Form::beSigned(const Bureaucrat& vogen)
 {
-	if (vogen.getGrade() <= _signGrade)
-		_signed = true;
+	if (!_signed)
+	{
+		if (vogen.getGrade() <= _signGrade)
+			_signed = true;
+		else
+			throw GradeTooLowException();
+	}
 	else
-		throw GradeTooLowException();
+		throw AlreadySignedException();
 }
 
 const char* Form::GradeTooHighException::what() const throw()
 {
-	return "grade too high";
+	return "grade is too high";
 }
 
 const char* Form::GradeTooLowException::what() const throw()
 {
-	return "grade too low";
+	return "grade is too low";
+}
+
+const char* Form::AlreadySignedException::what() const throw()
+{
+	return "form has already been signed";
 }
 
 std::ostream& operator<<(std::ostream& os, const Form& f)
 {
-	std::cout << f.getName() << ": grade to sign " << f.getSignGrade()
-		<< ", grade to execute " << f.getExecGrade();
-	if (f.getStatus())
-		std::cout << ", signed.";
-	else
-		std::cout << ", unsigned.";
+	os << f.getName()
+		<< ": grade to sign " << f.getSignGrade()
+		<< ", grade to execute " << f.getExecGrade()
+		<< ", " <<  (f.getStatus() ? "signed" : "unsigned") << ".";
 	return os;
 }

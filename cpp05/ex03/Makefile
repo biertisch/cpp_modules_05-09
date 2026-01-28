@@ -1,6 +1,6 @@
 NAME		=	bureaucrat
 
-SRC_FILES	=	main Bureaucrat AForm PresidentialPardonForm RobotomyRequestForm ShrubberyCreationForm
+SRC_FILES	=	main Bureaucrat AForm PresidentialPardonForm RobotomyRequestForm ShrubberyCreationForm Intern
 
 SRC_DIR		=	src/
 OBJ_DIR		=	obj/

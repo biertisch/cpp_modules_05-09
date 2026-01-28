@@ -8,33 +8,18 @@ void printSection(const std::string& title)
 	std::cout << std::string(width, '=') << '\n';
 }
 
-void decrementTryCatch(Bureaucrat *vogon)
+void alterTryCatch(Bureaucrat* vogon, void(Bureaucrat::*func)(int), int increment = 1)
 {
 	if (!vogon)
 		return;
 	try
 	{
-		--(*vogon);
-		std::cout << "Demoted: " << *vogon << '\n';
+		(vogon->*func)(increment);
+		std::cout << *vogon << '\n';
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-	}
-}
-
-void incrementTryCatch(Bureaucrat *vogon)
-{
-	if (!vogon)
-		return;
-	try
-	{
-		++(*vogon);
-		std::cout << "Promoted: " << *vogon << '\n';
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Failed to change " << vogon->getName() << "'s grade because " << e.what() << ".\n";
 	}
 }
 
@@ -48,7 +33,7 @@ Bureaucrat* createTryCatch(const std::string& name, int grade)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Failed to create " << name << " because " << e.what() << ".\n";
 		return NULL;
 	}
 }
@@ -56,19 +41,19 @@ Bureaucrat* createTryCatch(const std::string& name, int grade)
 int main()
 {
 	printSection("CREATING BUREAUCRATS");
-	Bureaucrat* a = createTryCatch("a", 1);
-	Bureaucrat* b = createTryCatch("b", 150);
-	Bureaucrat* c = createTryCatch("c", 0); // grade too high
-	Bureaucrat* d = createTryCatch("d", 151); // grade too low
+	Bureaucrat* a = createTryCatch("Reginald P. Clipboard", 1);
+	Bureaucrat* b = createTryCatch("Agnes Formwell", 150);
+	Bureaucrat* c = createTryCatch("Edgar Stampington", 151); // grade too low
+	Bureaucrat* d = createTryCatch("Beatrice Redtape", 0); // grade too high
 
 	printSection("INCREMENTING & DECREMENTING GRADES");
-	decrementTryCatch(a);
-	incrementTryCatch(a);
-	incrementTryCatch(a); // grade too high
-	incrementTryCatch(b);
-	decrementTryCatch(b);
-	decrementTryCatch(b); // grade too low
-	decrementTryCatch(b); // grade too low
+	alterTryCatch(a, &Bureaucrat::decrementGrade);
+	alterTryCatch(a, &Bureaucrat::incrementGrade);
+	alterTryCatch(a, &Bureaucrat::incrementGrade); // grade too high
+	alterTryCatch(b, &Bureaucrat::incrementGrade);
+	alterTryCatch(b, &Bureaucrat::decrementGrade);
+	alterTryCatch(b, &Bureaucrat::decrementGrade); // grade too low
+	alterTryCatch(b, &Bureaucrat::decrementGrade); // grade too low
 
 	// free memory
 	delete a;

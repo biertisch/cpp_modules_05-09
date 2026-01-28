@@ -26,7 +26,7 @@ Form* createForm(const std::string& name, const int signGrade, const int execGra
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Failed to create " << name << " because " << e.what() << ".\n";
 		return NULL;
 	}
 }
@@ -41,7 +41,7 @@ Bureaucrat* createBureaucrat(const std::string& name, int grade)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Failed to create " << name << " because " << e.what() << ".\n";
 		return NULL;
 	}
 }
@@ -49,28 +49,28 @@ Bureaucrat* createBureaucrat(const std::string& name, int grade)
 int main()
 {
 	printSection("CREATING BUREAUCRATS");
-	Bureaucrat* a = createBureaucrat("Arnold", 13);
-	Bureaucrat* b = createBureaucrat("Betty", 142);
+	Bureaucrat* bReg = createBureaucrat("Reginald P. Clipboard", 13);
+	Bureaucrat* bAgn = createBureaucrat("Agnes Formwell", 142);
 
 	printSection("CREATING FORMS");
-	Form* c = createForm("Crouton Uniformization Form", 32, 45);
-	Form* d = createForm("Dentist Permission Form", 148, 150);
-	Form* e = createForm("Ergonomic Chair Standard Form", -4, 150); // grade too low
-	Form* f = createForm("Flying Saucer Identification Form", 57, 190); // grade too high
+	Form* fFly = createForm("Flying Saucer Registration Form", 32, 15);
+	Form* fTea = createForm("Tea Temperature Regulation Form", 148, 142);
+	Form* fCrou = createForm("Crouton Standardization Form", -4, 150); // grade too low
+	Form* fErgo = createForm("Ergonomic Chair Compliance Form", 57, 190); // grade too high
 
 	printSection("SIGNING FORMS");
-	safeSignForm(a, c);
-	safeSignForm(b, c); // grade too low
-	safeSignForm(a, d);
-	safeSignForm(b, d);
+	safeSignForm(bAgn, fFly); // grade too low
+	safeSignForm(bReg, fFly);
+	safeSignForm(bReg, fFly); // already signed
+	safeSignForm(bAgn, fTea);
 
 	// free memory
-	delete a;
-	delete b;
-	delete c;
-	delete d;
-	delete e;
-	delete f;
+	delete bReg;
+	delete bAgn;
+	delete fFly;
+	delete fTea;
+	delete fCrou;
+	delete fErgo;
 
 	return 0;
 }

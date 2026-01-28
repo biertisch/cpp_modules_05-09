@@ -1,15 +1,12 @@
 #include "Bureaucrat.hpp"
 
-Bureaucrat::Bureaucrat() : _name("Vogon"), _grade(150) {}
-
 Bureaucrat::Bureaucrat(const std::string& name, int grade)
 	: _name(name), _grade(grade)
 {
-
-		if (grade < 1)
-			throw GradeTooHighException();
-		else if (grade > 150)
-			throw GradeTooLowException();
+	if (grade < 1)
+		throw GradeTooHighException();
+	else if (grade > 150)
+		throw GradeTooLowException();
 }
 
 Bureaucrat::Bureaucrat(const Bureaucrat& other)
@@ -25,22 +22,6 @@ Bureaucrat& Bureaucrat::operator=(const Bureaucrat& other)
 	return *this;
 }
 
-Bureaucrat& Bureaucrat::operator++()
-{
-	if (_grade <= 1)
-		throw GradeTooHighException();
-	_grade--;
-	return *this;
-}
-
-Bureaucrat& Bureaucrat::operator--()
-{
-	if (_grade >= 150)
-		throw GradeTooLowException();
-	_grade++;
-	return *this;
-}
-
 const std::string& Bureaucrat::getName() const
 {
 	return _name;
@@ -51,30 +32,42 @@ int Bureaucrat::getGrade() const
 	return _grade;
 }
 
-bool Bureaucrat::signForm(Form& form) const
+void Bureaucrat::incrementGrade(int nbIncrement)
+{
+	if (_grade - nbIncrement < 1)
+		throw GradeTooHighException();
+	_grade -= nbIncrement;
+}
+
+void Bureaucrat::decrementGrade(int nbDecrement)
+{
+	if (_grade + nbDecrement > 150)
+		throw GradeTooLowException();
+	_grade += nbDecrement;
+}
+
+void Bureaucrat::signForm(Form& form) const
 {
 	try
 	{
 		form.beSigned(*this);
-		std::cout << "Bureaucrat " << _name << " signed " << form.getName() << ".\n";
-		return true;
+		std::cout << _name << " signed " << form.getName() << ".\n";
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "Bureaucrat " << _name << " couldn't sign " << form.getName()
+		std::cerr << _name << " failed to sign " << form.getName()
 			<< " because " << e.what() << ".\n";
-			return false;
 	}
 }
 
 const char* Bureaucrat::GradeTooHighException::what() const throw()
 {
-	return "Grade too high";
+	return "grade is too high (< 1)";
 }
 
 const char* Bureaucrat::GradeTooLowException::what() const throw()
 {
-	return "Grade too low";
+	return "grade is too low (> 150)";
 }
 
 std::ostream& operator<<(std::ostream& os, const Bureaucrat& b)

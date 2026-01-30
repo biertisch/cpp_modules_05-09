@@ -1,22 +1,24 @@
 #include "Bureaucrat.hpp"
 #include "Form.hpp"
 
-void printSection(const std::string& title)
+static void printSection(const std::string& title)
 {
 	int width = 50;
 	int padding = (width - title.size()) / 2;
-	std::cout << '\n' << std::string(padding, ' ') << title	<< std::string(padding, ' ') << '\n';
-	std::cout << std::string(width, '=') << '\n';
+	std::cout << '\n' << std::string(width, '=')
+		<< '\n' << std::string(padding, ' ') << title
+		<< std::string(padding, ' ') << '\n'
+		<< std::string(width, '=') << '\n';
 }
 
-void safeSignForm(Bureaucrat* vogon, Form* form)
+static void safeSignForm(Bureaucrat* vogon, Form* form)
 {
 	if (!vogon || !form)
 		return;
 	vogon->signForm(*form);
 }
 
-Form* createForm(const std::string& name, const int signGrade, const int execGrade)
+static Form* createForm(const std::string& name, const int signGrade, const int execGrade)
 {
 	try
 	{
@@ -31,7 +33,7 @@ Form* createForm(const std::string& name, const int signGrade, const int execGra
 	}
 }
 
-Bureaucrat* createBureaucrat(const std::string& name, int grade)
+static Bureaucrat* createBureaucrat(const std::string& name, int grade)
 {
 	try
 	{

@@ -5,11 +5,12 @@
 #include "ShrubberyCreationForm.hpp"
 #include "Intern.hpp"
 
-void printSection(const std::string& title)
+static void printSection(const std::string& title)
 {
 	int width = 50;
 	int padding = (width - title.size()) / 2;
-	std::cout << '\n' << std::string(padding, ' ') << title
+	std::cout << '\n' << std::string(width, '=')
+		<< '\n' << std::string(padding, ' ') << title
 		<< std::string(padding, ' ') << '\n'
 		<< std::string(width, '=') << '\n';
 }

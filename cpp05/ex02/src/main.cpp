@@ -4,16 +4,17 @@
 #include "RobotomyRequestForm.hpp"
 #include "ShrubberyCreationForm.hpp"
 
-void printSection(const std::string& title)
+static void printSection(const std::string& title)
 {
 	int width = 50;
 	int padding = (width - title.size()) / 2;
-	std::cout << '\n' << std::string(padding, ' ') << title
+	std::cout << '\n' << std::string(width, '=')
+		<< '\n' << std::string(padding, ' ') << title
 		<< std::string(padding, ' ') << '\n'
 		<< std::string(width, '=') << '\n';
 }
 
-void safeExecuteForm(Bureaucrat* vogon, AForm* form)
+static void safeExecuteForm(Bureaucrat* vogon, AForm* form)
 {
 	if (!vogon || !form)
 		return;
@@ -26,14 +27,14 @@ void safeExecuteForm(Bureaucrat* vogon, AForm* form)
 	std::cout << "\n";
 }
 
-void safeSignForm(Bureaucrat* vogon, AForm* form)
+static void safeSignForm(Bureaucrat* vogon, AForm* form)
 {
 	if (!vogon || !form)
 		return;
 	vogon->signForm(*form);
 }
 
-Bureaucrat* createBureaucrat(const std::string& name, int grade)
+static Bureaucrat* createBureaucrat(const std::string& name, int grade)
 {
 	try
 	{

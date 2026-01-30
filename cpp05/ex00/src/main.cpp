@@ -1,14 +1,16 @@
 #include "Bureaucrat.hpp"
 
-void printSection(const std::string& title)
+static void printSection(const std::string& title)
 {
 	int width = 50;
 	int padding = (width - title.size()) / 2;
-	std::cout << '\n' << std::string(padding, ' ') << title	<< std::string(padding, ' ') << '\n';
-	std::cout << std::string(width, '=') << '\n';
+	std::cout << '\n' << std::string(width, '=')
+		<< '\n' << std::string(padding, ' ') << title
+		<< std::string(padding, ' ') << '\n'
+		<< std::string(width, '=') << '\n';
 }
 
-void alterTryCatch(Bureaucrat* vogon, void(Bureaucrat::*func)(int), int increment = 1)
+static void alterTryCatch(Bureaucrat* vogon, void(Bureaucrat::*func)(int), int increment = 1)
 {
 	if (!vogon)
 		return;
@@ -23,7 +25,7 @@ void alterTryCatch(Bureaucrat* vogon, void(Bureaucrat::*func)(int), int incremen
 	}
 }
 
-Bureaucrat* createTryCatch(const std::string& name, int grade)
+static Bureaucrat* createTryCatch(const std::string& name, int grade)
 {
 	try
 	{

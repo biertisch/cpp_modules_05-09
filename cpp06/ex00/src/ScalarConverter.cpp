@@ -13,69 +13,72 @@ ScalarConverter& ScalarConverter::operator=(const ScalarConverter&)
 
 void ScalarConverter::convert(const std::string& input)
 {
-	// step 0: initial validation (not empty, no non-printable chars)
-	if (!validateGeneral(input))
+	std::cout << "\nInput: '" << input << "'\n";
+
+	try
 	{
-		// print error message
-		return;
+		if (!validateGeneral(input))
+			return;
+
+		const std::string trimmedInput = trim(input);
+		const std::string lowerInput = lower(trimmedInput);
+		std::cout << std::fixed << std::setprecision(1);
+
+		e_type type = getType(lowerInput);
+		switch (type)
+		{
+			case CHAR:
+				convertChar(trimmedInput);
+				break;
+
+			case INT:
+				convertInt(lowerInput);
+				break;
+
+			case FLOAT:
+				convertFloat(lowerInput);
+				break;
+
+			case DOUBLE:
+				convertDouble(lowerInput);
+				break;
+
+			default:
+				break;
+		}
 	}
-
-	// maybe put every letter to lower case and trim spaces in beginning and end?
-
-	// step 1: identify & validate type (char, int, float, double)
-	// step 2: convert to type
-	// step 3: explicitly convert to three other types (using static_cast)
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << "\n";
+	}
 }
 
-// Checks if input is not empty and contains no non-printable chars
-static bool validateGeneral(const std::string& input)
+// Trims spaces in beginning and end
+std::string ScalarConverter::trim(const std::string& raw)
 {
-	if (input.empty())
-		return false;
+	size_t start = 0;
+	size_t end = raw.length() - 1;
 
-	for (size_t i = 0; i < input.length(); i++)
-		if (!isprint(input[i])) // issue error warning?
-			return false;
+	while (raw[start] == ' ' && start < raw.length() - 1)
+		start++;
 
-	return true;
+	while (raw[end] == ' ' && end > start)
+		end--;
+
+	size_t len = start == end ? 1 : end - start + 1;
+
+	if (start != 0 || end != raw.length() - 1)
+		return raw.substr(start, len);
+
+	return raw;
 }
 
-static ScalarConverter::e_type getType(const std::string& input)
+std::string ScalarConverter::lower(const std::string& raw)
 {
-	if (input.length() == 1 && !isdigit(input[0]))
-		return ScalarConverter::CHAR;
+	std::string processed = raw;
 
-	else if (input.find(".") == std::string::npos
-		&& input.find("inf") == std::string::npos
-		&& input.find("nan") == std::string::npos)
-	{
-		// if validateInt
-		return ScalarConverter::INT;
+	for (size_t i = 0; i < raw.length(); i++)
+		processed[i] = tolower(raw[i]);
 
-		// allows space, numeric chars, '+' and '-'
-		// check limits
-
-
-		// else return INVALID
-	}
-
-	else if (input.find("f") == input.length() - 1
-		&& input != "-inf"
-		&& input != "+inf")
-	{
-		// if validateFloat
-		return ScalarConverter::FLOAT;
-		// allows space, numeric chars, '+', '-', '.', 'f', '-inff','+inff', 'nanf'
-		// last char must be 'f'
-		// check limits
-
-		// else return INVALID
-	}
-
-	// else if validate double
-	// DOUBLE
-	// allows space, numeric chars, '+', '-', '.', '-inf', '+inf', 'nan'
-
-	else
-		return ScalarConverter::INVALID;
+	return processed;
 }

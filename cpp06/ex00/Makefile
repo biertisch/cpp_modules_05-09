@@ -1,6 +1,6 @@
 NAME		=	convert
 
-SRC_FILES	=	main ScalarConverter
+SRC_FILES	=	main ScalarConverter ScalarConverter_validate ScalarConverter_cast
 
 SRC_DIR		=	src/
 OBJ_DIR		=	obj/
@@ -30,18 +30,18 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 run: all
-	./$(NAME)
+	./$(NAME) $(ARGS)
 
 val: all
-	$(VAL) ./$(NAME)
+	$(VAL) ./$(NAME) $(ARGS)
 
 clean:
 	@echo "Removing object files..."
 	@$(RM) $(OBJ_DIR)
 
 fclean: clean
-	@echo "Removing executable and shrubbery..."
-	@$(RM) $(NAME) *_shrubbery
+	@echo "Removing executable..."
+	@$(RM) $(NAME)
 
 re: fclean all
 

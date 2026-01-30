@@ -30,7 +30,6 @@ int main(int argc, char **argv)
 	ScalarConverter::convert(""); // Invalid
 	ScalarConverter::convert("string"); // Invalid
 
-
 	printSection("Type: Int");
 	ScalarConverter::convert("0");
 	ScalarConverter::convert(" 66     ");

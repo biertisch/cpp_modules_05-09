@@ -15,41 +15,34 @@ void ScalarConverter::convert(const std::string& input)
 {
 	std::cout << "\nInput: '" << input << "'\n";
 
-	try
+	if (!validateGeneral(input))
+		return;
+
+	const std::string trimmedInput = trim(input);
+	const std::string lowerInput = lower(trimmedInput);
+	std::cout << std::fixed << std::setprecision(1);
+
+	e_type type = getType(lowerInput);
+	switch (type)
 	{
-		if (!validateGeneral(input))
-			return;
+		case CHAR:
+			convertChar(trimmedInput);
+			break;
 
-		const std::string trimmedInput = trim(input);
-		const std::string lowerInput = lower(trimmedInput);
-		std::cout << std::fixed << std::setprecision(1);
+		case INT:
+			convertInt(lowerInput);
+			break;
 
-		e_type type = getType(lowerInput);
-		switch (type)
-		{
-			case CHAR:
-				convertChar(trimmedInput);
-				break;
+		case FLOAT:
+			convertFloat(lowerInput);
+			break;
 
-			case INT:
-				convertInt(lowerInput);
-				break;
+		case DOUBLE:
+			convertDouble(lowerInput);
+			break;
 
-			case FLOAT:
-				convertFloat(lowerInput);
-				break;
-
-			case DOUBLE:
-				convertDouble(lowerInput);
-				break;
-
-			default:
-				break;
-		}
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << e.what() << "\n";
+		default:
+			break;
 	}
 }
 

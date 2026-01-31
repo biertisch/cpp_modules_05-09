@@ -1,4 +1,4 @@
-NAME		=	convert
+NAME		=	downcast
 
 SRC_FILES	=	main Base
 

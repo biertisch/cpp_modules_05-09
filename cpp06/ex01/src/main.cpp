@@ -16,10 +16,13 @@ int main()
 	std::cout << "dblVal: " << data.dblVal << "	\n";
 	std::cout << "strVal: " << data.strVal << "	\n";
 
-	std::cout << "\nContent of deserialized version:\n";
-	std::cout << "intVal: " << dataPtr->intVal << "\n";
-	std::cout << "dblVal: " << dataPtr->dblVal << "	\n";
-	std::cout << "strVal: " << dataPtr->strVal << "	\n";
+	if (dataPtr)
+	{
+		std::cout << "\nContent of deserialized version:\n";
+		std::cout << "intVal: " << dataPtr->intVal << "\n";
+		std::cout << "dblVal: " << dataPtr->dblVal << "	\n";
+		std::cout << "strVal: " << dataPtr->strVal << "	\n";
+	}
 
 	return 0;
 }

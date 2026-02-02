@@ -1,8 +1,11 @@
 #pragma once
 
-template <typename T, typename L, typename F>
-void iter(T* array, const L length, F function)
+template <typename T, typename F>
+void iter(T* array, const unsigned int length, F& function)
 {
-	for (L i = 0; i < length; i++)
+	if (!array)
+		return;
+
+	for (unsigned int i = 0; i < length; i++)
 		function(array[i]);
 }

@@ -9,9 +9,8 @@ PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& oth
 PresidentialPardonForm::~PresidentialPardonForm() {}
 
 // Cannot copy anything: all attributes are private in base class
-PresidentialPardonForm& PresidentialPardonForm::operator=(const PresidentialPardonForm& other)
+PresidentialPardonForm& PresidentialPardonForm::operator=(const PresidentialPardonForm&)
 {
-	(void)other;
 	return *this;
 }
 

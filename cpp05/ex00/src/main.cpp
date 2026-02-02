@@ -12,7 +12,7 @@ static void printSection(const std::string& title)
 
 static void alterTryCatch(Bureaucrat* vogon, void(Bureaucrat::*func)(int), int increment = 1)
 {
-	if (!vogon)
+	if (!vogon || !func)
 		return;
 	try
 	{

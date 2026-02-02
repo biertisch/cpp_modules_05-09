@@ -15,9 +15,8 @@ RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm& other) :
 RobotomyRequestForm::~RobotomyRequestForm() {}
 
 // Cannot copy anything: all attributes are private in base class
-RobotomyRequestForm& RobotomyRequestForm::operator=(const RobotomyRequestForm& other)
+RobotomyRequestForm& RobotomyRequestForm::operator=(const RobotomyRequestForm&)
 {
-	(void)other;
 	return *this;
 }
 

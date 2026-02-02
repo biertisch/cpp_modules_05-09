@@ -8,16 +8,12 @@ std::string Intern::_knownForms[3] = {
 
 Intern::Intern() {}
 
-Intern::Intern(const Intern& other)
-{
-	(void)other;
-}
+Intern::Intern(const Intern&) {}
 
 Intern::~Intern() {}
 
-Intern& Intern::operator=(const Intern& other)
+Intern& Intern::operator=(const Intern&)
 {
-	(void)other;
 	return *this;
 }
 

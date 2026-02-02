@@ -9,9 +9,8 @@ ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& other)
 ShrubberyCreationForm::~ShrubberyCreationForm() {}
 
 // Cannot copy anything: all attributes are private in base class
-ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm& other)
+ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm&)
 {
-	(void)other;
 	return *this;
 }
 

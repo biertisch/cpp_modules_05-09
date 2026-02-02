@@ -62,7 +62,7 @@ int main()
 	std::cout << "\n";
 
 	printSection("Testing with std::string");
-	std::string string_array[] = {"apple", "banana", "cherry", "kiwi", "orange"};
+	const std::string string_array[] = {"apple", "banana", "cherry", "kiwi", "orange"};
 
 	std::cout << "print<std::string>:\t";
 	iter(string_array, 5, print<std::string>);

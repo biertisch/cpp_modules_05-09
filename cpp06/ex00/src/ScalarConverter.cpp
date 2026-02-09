@@ -58,7 +58,7 @@ std::string ScalarConverter::trim(const std::string& raw)
 	while (raw[end] == ' ' && end > start)
 		end--;
 
-	size_t len = start == end ? 1 : end - start + 1;
+	size_t len = end - start + 1;
 
 	if (start != 0 || end != raw.length() - 1)
 		return raw.substr(start, len);

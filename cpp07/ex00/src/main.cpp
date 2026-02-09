@@ -25,7 +25,7 @@ int main()
 	std::cout << "min(a, b) = " << ::min(a, b) << std::endl;
 	std::cout << "max(a, b) = " << ::max(a, b) << std::endl;
 
-	printSection("Testing with std::string (a = chaine1, b = chaine2)");
+	printSection("Testing with std::string (c = chaine1, d = chaine2)");
 	std::string c = "chaine1";
 	std::string d = "chaine2";
 	::swap(c, d);
@@ -33,7 +33,7 @@ int main()
 	std::cout << "min(c, d) = " << ::min(c, d) << std::endl;
 	std::cout << "max(c, d) = " << ::max(c, d) << std::endl;
 
-	printSection("Testing with double (a = -48.7, b = 3.5)");
+	printSection("Testing with double (e = -48.7, f = 3.5)");
 	double e = -48.7;
 	double f = 3.5;
 	swap(e, f);

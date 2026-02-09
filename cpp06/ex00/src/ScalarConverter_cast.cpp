@@ -18,7 +18,7 @@ void ScalarConverter::convertInt(const std::string& input)
 {
 	int value = atoi(input.c_str());
 
-	if (value >= 0 && value <= 127 && isprint(value))
+	if (value >= 0 && value < 127 && isprint(value))
 		std::cout << "char: '" << static_cast<char>(value) << "'\n";
 	else
 		std::cout << "char: Non displayable\n";
@@ -35,7 +35,7 @@ void ScalarConverter::convertFloat(const std::string& input)
 
 	float value = strtof(input.c_str(), NULL);
 
-	if (value >= 0 && value <= 127 && isprint(static_cast<int>(value)))
+	if (value >= 0 && value < 127 && isprint(static_cast<int>(value)))
 		std::cout << "char: '" << static_cast<char>(value) << "'\n";
 	else
 		std::cout << "char: Non displayable\n";
@@ -57,7 +57,7 @@ void ScalarConverter::convertDouble(const std::string& input)
 
 	double value = strtod(input.c_str(), NULL);
 
-	if (value >= 0 && value <= 127 && isprint(static_cast<int>(value)))
+	if (value >= 0 && value < 127 && isprint(static_cast<int>(value)))
 		std::cout << "char: '" << static_cast<char>(value) << "'\n";
 	else
 		std::cout << "char: Non displayable\n";
@@ -72,7 +72,7 @@ void ScalarConverter::convertDouble(const std::string& input)
 		&& value <= std::numeric_limits<float>::max())
 		std::cout << "float: " << static_cast<float>(value) << "f\n";
 	else
-		std::cout << "int: out of range\n";
+		std::cout << "float: out of range\n";
 
 	std::cout << "double: " << value << "\n";
 }

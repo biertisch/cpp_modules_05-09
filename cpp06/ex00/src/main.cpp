@@ -67,6 +67,8 @@ int main(int argc, char **argv)
 	ScalarConverter::convert("3.4028236e38"); // over FLOAT_MAX
 	ScalarConverter::convert("1.8e308"); // Invalid
 	ScalarConverter::convert("12a.8"); // Invalid
+	ScalarConverter::convert("12ee"); // Invalid
+	ScalarConverter::convert("e128"); // Invalid
 	ScalarConverter::convert("12..8"); // Invalid
 	ScalarConverter::convert("12.8.0"); // Invalid
 

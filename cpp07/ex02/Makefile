@@ -30,10 +30,10 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 run: all
-	./$(NAME) $(ARGS)
+	./$(NAME)
 
 val: all
-	$(VAL) ./$(NAME) $(ARGS)
+	$(VAL) ./$(NAME)
 
 clean:
 	@echo "Removing object files..."

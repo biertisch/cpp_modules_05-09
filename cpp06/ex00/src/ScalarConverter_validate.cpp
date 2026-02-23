@@ -9,7 +9,7 @@ bool ScalarConverter::validateGeneral(const std::string& input)
 		return false;
 	}
 
-	for (size_t i = 0; i < input.length(); i++)
+	for (size_t i = 0; i < input.length(); ++i)
 	{
 		if (!isprint(input[i]))
 		{

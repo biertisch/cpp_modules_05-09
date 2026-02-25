@@ -70,7 +70,7 @@ std::string ScalarConverter::lower(const std::string& raw)
 {
 	std::string processed = raw;
 
-	for (size_t i = 0; i < raw.length(); i++)
+	for (size_t i = 0; i < raw.length(); ++i)
 		processed[i] = tolower(raw[i]);
 
 	return processed;

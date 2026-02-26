@@ -1,0 +1,50 @@
+#pragma once
+
+#include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <sys/time.h>
+#include <vector>
+#include <utility>
+
+class PmergeMe
+{
+	private:
+		std::list<unsigned int> _list;
+		std::vector<unsigned int> _vector;
+		long long _listTimer;
+		long long _vectorTimer;
+
+		void parseInput(int ac, char** argv);
+		unsigned int parseNumber(const std::string& arg) const;
+
+		void mergeInsertionSort(std::list<unsigned int>& list);
+		void mergeInsertionSort(std::vector<unsigned int>& vector);
+
+		template <typename T>
+		bool isSorted(T& container) const
+		{
+			return (std::adjacent_find(
+					container.begin(),
+					container.end(),
+					std::greater<typename T::value_type>())
+				== container.end());
+		}
+
+		long long getTime() const;
+		void printSequence(const std::string& description) const;
+		void printTimers() const;
+
+	public:
+		PmergeMe();
+		PmergeMe(int ac, char** argv);
+		PmergeMe(const PmergeMe& other);
+		~PmergeMe();
+		PmergeMe& operator=(const PmergeMe& other);
+};

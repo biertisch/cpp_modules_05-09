@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -26,16 +27,7 @@ class PmergeMe
 
 		void mergeInsertionSort(std::list<unsigned int>& list);
 		void mergeInsertionSort(std::vector<unsigned int>& vector);
-
-		template <typename T>
-		bool isSorted(T& container) const
-		{
-			return (std::adjacent_find(
-					container.begin(),
-					container.end(),
-					std::greater<typename T::value_type>())
-				== container.end());
-		}
+		size_t findInsertIndex(const std::vector<unsigned int>& list, unsigned int value, size_t right) const;
 
 		long long getTime() const;
 		void printSequence(const std::string& description) const;

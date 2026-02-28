@@ -16,9 +16,6 @@ PmergeMe::PmergeMe(int ac, char** argv)
 	mergeInsertionSort(_vector);
 	_vectorTimer = getTime() - start;
 
-	if (!isSorted(_list) || !isSorted(_vector))
-		throw std::runtime_error("failed to sort input");
-
 	printSequence("After");
 	printTimers();
 }
@@ -77,6 +74,39 @@ unsigned int PmergeMe::parseNumber(const std::string& arg) const
 	return static_cast<unsigned int>(n);
 }
 
+template <typename T, typename U>
+void groupPairs(const T& container, U& pairContainer)
+{
+	typedef typename T::const_iterator Iter;
+	Iter it = container.begin();
+
+	while (it != container.end())
+	{
+		Iter next = it;
+		++next;
+		if (next != container.end())
+		{
+			pairContainer.push_back(std::make_pair(
+				std::max(*it, *next),
+				std::min(*it, *next)
+			));
+		}
+		++it;
+		if (it != container.end())
+			++it;
+	}
+}
+
+template <typename T>
+bool isSorted(T& container)
+{
+	return (std::adjacent_find(
+			container.begin(),
+			container.end(),
+			std::greater<typename T::value_type>())
+		== container.end());
+}
+
 void PmergeMe::mergeInsertionSort(std::list<unsigned int>& list)
 {
 	(void)list;
@@ -87,41 +117,90 @@ void PmergeMe::mergeInsertionSort(std::vector<unsigned int>& vector)
 	if (vector.size() <= 1)
 		return;
 
-	// Group in pairs
-	std::vector<std::pair<unsigned int, unsigned int>> pairs;
-	for (size_t i = 0; i < vector.size() - 1; i += 2)
-		pairs.push_back({
-			std::max(vector[i], vector[i + 1]),
-			std::min(vector[i], vector[i + 1])
-		});
+	std::vector<std::pair<unsigned int, unsigned int> > pairs;
+	groupPairs(vector, pairs);
 
-	// Group largest element of each pair
-	std::vector<unsigned int> sorted, uninserted;
+	// for (size_t i = 0; i < vector.size() - 1; i += 2)
+	// 	pairs.push_back(std::make_pair(
+	// 			std::max(vector[i], vector[i + 1]),
+	// 			std::min(vector[i], vector[i + 1])
+	// 		));
+
+	// Refactor to template
+	// Group largest of each pair
+	std::vector<unsigned int> sorted;
+	sorted.reserve(pairs.size() + 1);
 	for(size_t i = 0; i < pairs.size(); ++i)
-	{
 		sorted.push_back(pairs[i].first);
-		uninserted.push_back(pairs[i].second);
-	}
-	if (vector.size() % 2 != 0)
-		uninserted.push_back(vector.back());
 
-	// Recursively sort subgroup
+	// Recursively sort largest of each pair
 	mergeInsertionSort(sorted);
 
-	// Insert at the start pair of the smallest element
+	// Refactor to template
+	// Insert pair of smallest element at the start
+	sorted.reserve(vector.size());
 	for (size_t i = 0; i < pairs.size(); ++i)
 	{
 		if (sorted[0] == pairs[i].first)
 		{
 			sorted.insert(sorted.begin(), pairs[i].second);
-			uninserted.erase(uninserted.begin() + i);
+			pairs.erase(pairs.begin() + i);
 			break;
 		}
 	}
 
-	// Jacobsthal partition
+	// Refactor to separate function?
+	// Insert remaining elements following Jacobsthal sequence
+	// 2, 2, 6, 10, 22, 42, ...
+	int start = 0;
+	int size = 2;
+	int subgroup = 0;
+	int total = static_cast<int>(pairs.size());
+	while (start < total)
+	{
+		int end = std::min(start + size, total) - 1;
+		for (int i = end; i >= start; --i)
+		{
+			// Refactor to template
+			size_t bound = 0;
+			while (bound < sorted.size() && sorted[bound] != pairs[i].first)
+				++bound;
+			// Insert using binary search
+			size_t index = findInsertIndex(sorted, pairs[i].second, bound);
+			sorted.insert(sorted.begin() + index, pairs[i].second);
+		}
+		start += size;
+		++subgroup;
+		size = (1 << (subgroup + 1)) - size; // g(n) = 2^(n+1) - g(n-1)
+	}
 
-	// Insertion using binary search
+	// Handle straggler
+	if (vector.size() % 2 != 0)
+	{
+		size_t index = findInsertIndex(sorted, vector.back(), sorted.size());
+		sorted.insert(sorted.begin() + index, vector.back());
+	}
+
+	// Validate sorting
+	if (sorted.size() != vector.size() || !isSorted(sorted))
+		throw std::runtime_error("failed to sort input");
+
+	vector.swap(sorted);
+}
+
+size_t PmergeMe::findInsertIndex(const std::vector<unsigned int>& vector, unsigned int value, size_t right) const
+{
+	size_t left = 0;
+
+	while (left < right)
+	{
+		size_t mid = (left + right) / 2;
+		if (value < vector[mid])
+			right = mid;
+		else
+			left = mid + 1;
+	}
+	return left;
 }
 
 long long PmergeMe::getTime() const

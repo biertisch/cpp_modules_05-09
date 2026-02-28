@@ -5,9 +5,10 @@ PmergeMe::PmergeMe() : _vectorTimer(0), _listTimer(0) {}
 PmergeMe::PmergeMe(int ac, char** argv)
 {
 	parseInput(ac, argv);
-
+	size_t inputSize = _vector.size();
 	printSequence("Before");
 
+	// Sort with timer
 	long long start = getTime();
 	mergeInsertionSort(_vector);
 	_vectorTimer = getTime() - start;
@@ -15,6 +16,14 @@ PmergeMe::PmergeMe(int ac, char** argv)
 	start = getTime();
 	mergeInsertionSort(_list);
 	_listTimer = getTime() - start;
+
+	// Validate sorting
+	if (_vector.size() != inputSize
+		|| _list.size() != inputSize
+		|| !isSorted(_vector)
+		|| !isSorted(_list)
+	)
+		throw std::runtime_error("failed to sort input");
 
 	printSequence("After");
 	printTimers();
@@ -101,10 +110,6 @@ void PmergeMe::mergeInsertionSort(Vector& vector)
 
 	// Handle straggler from odd-sized input
 	handleStraggler(vector, sorted);
-
-	// Validate sorting
-	if (sorted.size() != vector.size() || !isSorted(sorted))
-		throw std::runtime_error("failed to sort input");
 
 	vector.swap(sorted);
 }
@@ -225,10 +230,6 @@ void PmergeMe::mergeInsertionSort(std::list<unsigned int>& list)
 
 	// Handle straggler from odd-sized input
 	handleStraggler(list, sorted);
-
-	// Validate sorting
-	if (sorted.size() != list.size() || !isSorted(sorted))
-		throw std::runtime_error("failed to sort input");
 
 	list.swap(sorted);
 }

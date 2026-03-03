@@ -289,11 +289,10 @@ void PmergeMe::insertRemaining(List& sorted, const PairList& pairs) const
 
 	while (start != pairs.end())
 	{
-		ConstPairIter end = start;
-		for (int i = 0; i < size && end != pairs.end(); ++i)
-			++end;
+		ConstPairIter it = start;
+		for (int i = 0; i < size && it != pairs.end(); ++i)
+			++it;
 
-		ConstPairIter it = end;
 		while (it != start)
 		{
 			--it;

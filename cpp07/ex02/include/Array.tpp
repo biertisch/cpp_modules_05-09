@@ -13,7 +13,7 @@ Array<T>::Array(unsigned int length) :  _length(length), _data(new T[length])
 {
 	std::cout << "Parametrized Constructor: Created an array of size " << _length << " and type " << typeid(T).name() << ".\n";
 
-	for (unsigned int i = 0; i < _length; i++)
+	for (unsigned int i = 0; i < _length; ++i)
 		_data[i] = T();
 }
 
@@ -22,7 +22,7 @@ Array<T>::Array(const Array& other) : _length(other._length), _data(new T[other.
 {
 	std::cout << "Copy Constructor: Created an array of size " << _length << " and type " << typeid(T).name() << ".\n";
 
-	for (unsigned int i = 0; i < _length; i++)
+	for (unsigned int i = 0; i < _length; ++i)
 		_data[i] = other._data[i];
 }
 
@@ -42,7 +42,7 @@ Array<T>& Array<T>::operator=(const Array& other)
 		_length = other._length;
 		delete[] _data;
 		_data = new T[_length];
-		for (unsigned int i = 0; i < _length; i++)
+		for (unsigned int i = 0; i < _length; ++i)
 			_data[i] = other._data[i];
 	}
 
@@ -81,7 +81,7 @@ std::ostream& operator<<(std::ostream& out, const Array<T>& array)
 		out << "empty array";
 	else
 	{
-		for (unsigned int i = 0; i < array.size(); i++)
+		for (unsigned int i = 0; i < array.size(); ++i)
 			out << array[i] << " ";
 	}
 	return out;

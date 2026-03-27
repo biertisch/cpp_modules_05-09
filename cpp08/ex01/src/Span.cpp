@@ -43,8 +43,10 @@ unsigned int Span::longestSpan() const
 {
 	if (_container.size() < 2)
 		throw std::length_error("Too few elements to search span");
+	
 	int min = *std::min_element(_container.begin(), _container.end());
 	int max = *std::max_element(_container.begin(), _container.end());
+	
 	return static_cast<unsigned int>(max - min);
 }
 
@@ -57,7 +59,7 @@ unsigned int Span::shortestSpan() const
 	sort(sorted.begin(), sorted.end());
 
 	unsigned int shortest = std::numeric_limits<int>::max();
-	for (unsigned int i = 1; i < sorted.size(); i++)
+	for (size_t i = 1; i < sorted.size(); ++i)
 	{
 		unsigned int diff = sorted[i] - sorted[i - 1];
 		if (diff < shortest)
@@ -70,7 +72,7 @@ unsigned int Span::shortestSpan() const
 std::ostream& operator<<(std::ostream& os, const Span& sp)
 {
 	os << "Span: ";
-	for (unsigned int i = 0; i < sp.size(); i++)
+	for (unsigned int i = 0; i < sp.size(); ++i)
 		os << sp[i] << " ";
 	return os;
 }

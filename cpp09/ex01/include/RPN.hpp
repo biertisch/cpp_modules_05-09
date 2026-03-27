@@ -10,7 +10,7 @@
 class RPN
 {
 	private:
-		std::stack<double> _stack;
+		std::stack<int> _stack;
 
 		bool isOperator(char c) const;
 		void executeOperation(char c);

@@ -22,7 +22,7 @@ double RPN::calculate(const std::string& input)
 
 		else if (std::isdigit(input[i]))
 		{
-			double value = std::atof(input.substr(i).c_str());
+			int value = std::atoi(input.substr(i).c_str());
 			if (value > 9)
 				throw std::invalid_argument("operand too big (>9)");
 			_stack.push(value);
@@ -35,8 +35,10 @@ double RPN::calculate(const std::string& input)
 			throw std::invalid_argument("invalid character");
 	}
 
-	if (_stack.size() != 1)
+	if (_stack.size() > 1)
 		throw std::invalid_argument("too many operands");
+	if (_stack.size() < 1)
+		throw std::invalid_argument("no operands");
 	return _stack.top();
 }
 

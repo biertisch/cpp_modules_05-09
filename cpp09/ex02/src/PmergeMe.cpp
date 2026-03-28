@@ -1,6 +1,6 @@
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe() : _vectorTimer(0), _listTimer(0) {}
+PmergeMe::PmergeMe() : _vectorTimer(0), _dequeTimer(0) {}
 
 PmergeMe::PmergeMe(int ac, char** argv)
 {
@@ -14,26 +14,28 @@ PmergeMe::PmergeMe(int ac, char** argv)
 	_vectorTimer = getTime() - start;
 
 	start = getTime();
-	mergeInsertionSort(_list);
-	_listTimer = getTime() - start;
+	mergeInsertionSort(_deque);
+	_dequeTimer = getTime() - start;
 
 	// Validate sorting
 	if (_vector.size() != inputSize
-		|| _list.size() != inputSize
+		|| _deque.size() != inputSize
 		|| !isSorted(_vector)
-		|| !isSorted(_list)
+		|| !isSorted(_deque)
 	)
+	{
 		throw std::runtime_error("failed to sort input");
-
+	}
+	
 	printSequence("After");
 	printTimers();
 }
 
 PmergeMe::PmergeMe(const PmergeMe& other) :
 	_vector(other._vector),
-	_list(other._list),
+	_deque(other._deque),
 	_vectorTimer(other._vectorTimer),
-	_listTimer(other._listTimer) {}
+	_dequeTimer(other._dequeTimer) {}
 
 PmergeMe::~PmergeMe() {}
 
@@ -42,15 +44,14 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 	if (this != &other)
 	{
 		_vector = other._vector;
-		_list = other._list;
+		_deque = other._deque;
 		_vectorTimer = other._vectorTimer;
-		_listTimer = other._listTimer;
+		_dequeTimer = other._dequeTimer;
 	}
 	return *this;
 }
 
 // PARSING
-
 void PmergeMe::parseInput(int ac, char** argv)
 {
 	if (ac < 1)
@@ -60,7 +61,7 @@ void PmergeMe::parseInput(int ac, char** argv)
 	{
 		unsigned int n = parseNumber(argv[i]);
 		_vector.push_back(n);
-		_list.push_back(n);
+		_deque.push_back(n);
 	}
 
 	std::set<unsigned int> seen;
@@ -86,7 +87,6 @@ unsigned int PmergeMe::parseNumber(const std::string& arg) const
 }
 
 // SORTING STD::VECTOR
-
 void PmergeMe::mergeInsertionSort(Vector& vector)
 {
 	if (vector.size() <= 1)
@@ -95,17 +95,23 @@ void PmergeMe::mergeInsertionSort(Vector& vector)
 	// Group pairs
 	PairVector pairs = groupPairs(vector);
 
+	Vector sorted;
+	sorted.reserve(vector.size());
 	// Group largest of each pair
-	Vector sorted = groupLargest(pairs);
+	for(size_t i = 0; i < pairs.size(); ++i)
+		sorted.push_back(pairs[i].first);
 
-	// Recursively sort largest of each pair
+	// Recursively sort largest
 	mergeInsertionSort(sorted);
 
-	// Insert pair of smallest element at the start
-	insertSmallestPair(sorted, pairs);
+	// Reconstitute link between pairs
+	pairs = reorderPairs(sorted, pairs);
 
-	// Insert remaining elements following Jacobsthal sequence and binary search
-	sorted.reserve(vector.size());
+	// Insert smallest from first pair
+	sorted.insert(sorted.begin(), pairs[0].second);
+	pairs.erase(pairs.begin());
+
+	// Insert remaining following Jacobsthal sequence and binary search
 	insertRemaining(sorted, pairs);
 
 	// Handle straggler from odd-sized input
@@ -120,36 +126,33 @@ PmergeMe::PairVector PmergeMe::groupPairs(const Vector& vector) const
 	pairs.reserve(vector.size() / 2);
 
 	for (size_t i = 0; i < vector.size() - 1; i += 2)
-		pairs.push_back(std::make_pair(
-				std::max(vector[i], vector[i + 1]),
-				std::min(vector[i], vector[i + 1])
-			));
-
+	{
+		if (vector[i] > vector[i + 1])
+			pairs.push_back(std::make_pair(vector[i], vector[i + 1]));
+		else
+			pairs.push_back(std::make_pair(vector[i + 1], vector[i]));
+	}
 	return pairs;
 }
 
-PmergeMe::Vector PmergeMe::groupLargest(const PairVector& pairs) const
+PmergeMe::PairVector PmergeMe::reorderPairs(const Vector& largest, const PairVector& pairs)
 {
-	Vector largest;
-	largest.reserve(pairs.size() + 1);
+	PairVector reorderedPairs;
+	reorderedPairs.reserve(pairs.size());
 
-	for(size_t i = 0; i < pairs.size(); ++i)
-		largest.push_back(pairs[i].first);
-
-	return largest;
-}
-
-void PmergeMe::insertSmallestPair(Vector& sorted, PairVector& pairs) const
-{
-	for (size_t i = 0; i < pairs.size(); ++i)
+	for (size_t i = 0; i < largest.size(); ++i)
 	{
-		if (sorted[0] == pairs[i].first)
+		for (size_t j = 0; j < pairs.size(); ++j)
 		{
-			sorted.insert(sorted.begin(), pairs[i].second);
-			pairs.erase(pairs.begin() + i);
-			break;
+			if (pairs[j].first == largest[i])
+			{
+				reorderedPairs.push_back(pairs[j]);
+				break;
+			}
 		}
 	}
+
+	return reorderedPairs;
 }
 
 void PmergeMe::insertRemaining(Vector& sorted, const PairVector& pairs) const
@@ -158,28 +161,24 @@ void PmergeMe::insertRemaining(Vector& sorted, const PairVector& pairs) const
 	int size = 2;
 	int subgroup = 0;
 	int total = static_cast<int>(pairs.size());
+	int inserted = 1;
+
 	while (start < total)
 	{
 		int end = std::min(start + size, total) - 1;
 		for (int i = end; i >= start; --i)
 		{
-			size_t bound = getInsertBound(sorted, pairs[i].first);
 			// Insert using binary search
+			size_t bound = i + inserted + 1;
 			size_t index = findInsertPosition(sorted, pairs[i].second, bound);
 			sorted.insert(sorted.begin() + index, pairs[i].second);
+			++inserted;
 		}
 		start += size;
 		++subgroup;
 		size = (1 << (subgroup + 1)) - size; // g(n) = 2^(n+1) - g(n-1)
+		// Jacobstahl sequence: 2, 2, 6, 10, 22, 42, ...
 	}
-}
-
-size_t PmergeMe::getInsertBound(const Vector& vector, unsigned int value) const
-{
-	size_t bound = 0;
-	while (bound < vector.size() && vector[bound] != value)
-		++bound;
-	return bound;
 }
 
 size_t PmergeMe::findInsertPosition(const Vector& vector, unsigned int value, size_t right) const
@@ -206,126 +205,123 @@ void PmergeMe::handleStraggler(const Vector& vector, Vector& sorted) const
 	sorted.insert(sorted.begin() + index, vector.back());
 }
 
-// SORTING STD::LIST
-
-void PmergeMe::mergeInsertionSort(std::list<unsigned int>& list)
+// SORTING STD::DEQUE
+void PmergeMe::mergeInsertionSort(Deque& deque)
 {
-	if (list.size() <= 1)
+	if (deque.size() <= 1)
 		return;
 
 	// Group pairs
-	PairList pairs = groupPairs(list);
+	PairDeque pairs = groupPairs(deque);
 
+	Deque sorted;
 	// Group largest of each pair
-	List sorted = groupLargest(pairs);
+	for(size_t i = 0; i < pairs.size(); ++i)
+		sorted.push_back(pairs[i].first);
 
-	// Recursively sort largest of each pair
+	// Recursively sort largest
 	mergeInsertionSort(sorted);
 
-	// Insert pair of smallest element at the start
-	insertSmallestPair(sorted, pairs);
+	// Reconstitute link between pairs
+	pairs = reorderPairs(sorted, pairs);
 
-	// Insert remaining elements following Jacobsthal sequence and linear search
+	// Insert smallest from first pair
+	sorted.insert(sorted.begin(), pairs[0].second);
+	pairs.erase(pairs.begin());
+
+	// Insert remaining following Jacobsthal sequence and binary search
 	insertRemaining(sorted, pairs);
 
 	// Handle straggler from odd-sized input
-	handleStraggler(list, sorted);
+	handleStraggler(deque, sorted);
 
-	list.swap(sorted);
+	deque.swap(sorted);
 }
 
-PmergeMe::PairList PmergeMe::groupPairs(const List& list) const
+PmergeMe::PairDeque PmergeMe::groupPairs(const Deque& deque) const
 {
-	PairList pairs;
+	PairDeque pairs;
 
-	ConstIter it = list.begin();
-	while (it != list.end())
+	for (size_t i = 0; i < deque.size() - 1; i += 2)
 	{
-		ConstIter next = it;
-		++next;
-		if (next != list.end())
-		{
-			pairs.push_back(std::make_pair(
-				std::max(*it, *next),
-				std::min(*it, *next)
-			));
-		}
-		++it;
-		if (it != list.end())
-			++it;
+		if (deque[i] > deque[i + 1])
+			pairs.push_back(std::make_pair(deque[i], deque[i + 1]));
+		else
+			pairs.push_back(std::make_pair(deque[i + 1], deque[i]));
 	}
-
 	return pairs;
 }
 
-PmergeMe::List PmergeMe::groupLargest(const PairList& pairs) const
+PmergeMe::PairDeque PmergeMe::reorderPairs(const Deque& largest, const PairDeque& pairs)
 {
-	List largest;
+	PairDeque reorderedPairs;
 
-	for (ConstPairIter it = pairs.begin(); it != pairs.end(); ++it)
-		largest.push_back(it->first);
-
-	return largest;
-}
-
-void PmergeMe::insertSmallestPair(List& sorted, PairList& pairs) const
-{
-	for (PairIter it = pairs.begin(); it != pairs.end(); ++it)
+	for (size_t i = 0; i < largest.size(); ++i)
 	{
-		if (it->first == sorted.front())
+		for (size_t j = 0; j < pairs.size(); ++j)
 		{
-			sorted.insert(sorted.begin(), it->second);
-			pairs.erase(it);
-			break;
+			if (pairs[j].first == largest[i])
+			{
+				reorderedPairs.push_back(pairs[j]);
+				break;
+			}
 		}
 	}
+
+	return reorderedPairs;
 }
 
-void PmergeMe::insertRemaining(List& sorted, const PairList& pairs) const
+void PmergeMe::insertRemaining(Deque& sorted, const PairDeque& pairs) const
 {
-	ConstPairIter start = pairs.begin();
+	int start = 0;
 	int size = 2;
 	int subgroup = 0;
+	int total = static_cast<int>(pairs.size());
+	int inserted = 1;
 
-	while (start != pairs.end())
+	while (start < total)
 	{
-		ConstPairIter it = start;
-		for (int i = 0; i < size && it != pairs.end(); ++i)
-			++it;
-
-		while (it != start)
+		int end = std::min(start + size, total) - 1;
+		for (int i = end; i >= start; --i)
 		{
-			--it;
-			Iter pos = findInsertPosition(sorted, it->second);
-			sorted.insert(pos, it->second);
+			// Insert using binary search
+			size_t bound = i + inserted + 1;
+			size_t index = findInsertPosition(sorted, pairs[i].second, bound);
+			sorted.insert(sorted.begin() + index, pairs[i].second);
+			++inserted;
 		}
-
-		for (int i = 0; i < size && start != pairs.end(); ++i)
-			++start;
+		start += size;
 		++subgroup;
 		size = (1 << (subgroup + 1)) - size; // g(n) = 2^(n+1) - g(n-1)
+		// Jacobstahl sequence: 2, 2, 6, 10, 22, 42, ...
 	}
 }
 
-PmergeMe::Iter PmergeMe::findInsertPosition(List& list, unsigned int value) const
+size_t PmergeMe::findInsertPosition(const Deque& deque, unsigned int value, size_t right) const
 {
-	Iter it = list.begin();
-	while (it != list.end() && *it < value)
-		++it;
-	return it;
+	size_t left = 0;
+
+	while (left < right)
+	{
+		size_t mid = (left + right) / 2;
+		if (value < deque[mid])
+			right = mid;
+		else
+			left = mid + 1;
+	}
+	return left;
 }
 
-void PmergeMe::handleStraggler(const List& list, List& sorted) const
+void PmergeMe::handleStraggler(const Deque& deque, Deque& sorted) const
 {
-	if (list.size() % 2 == 0)
+	if (deque.size() % 2 == 0)
 		return;
 
-	Iter it = findInsertPosition(sorted, list.back());
-	sorted.insert(it, list.back());
+	size_t index = findInsertPosition(sorted, deque.back(), sorted.size());
+	sorted.insert(sorted.begin() + index, deque.back());
 }
 
 // UTILS
-
 long long PmergeMe::getTime() const
 {
 	struct timeval now;
@@ -357,8 +353,8 @@ void PmergeMe::printTimers() const
 
 	std::cout
 		<< "Time to process a range of "
-		<< _list.size()
-		<< " elements with std::list:   "
-		<< _listTimer
+		<< _deque.size()
+		<< " elements with std::deque: "
+		<< _dequeTimer
 		<< " μs\n";
 }

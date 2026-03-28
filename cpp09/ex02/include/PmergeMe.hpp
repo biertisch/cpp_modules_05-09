@@ -4,9 +4,9 @@
 #include <cctype>
 #include <cmath>
 #include <cstdlib>
+#include <deque>
 #include <iostream>
 #include <limits>
-#include <list>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -24,20 +24,16 @@ class PmergeMe
 		PmergeMe& operator=(const PmergeMe& other);
 
 		typedef std::vector<unsigned int> Vector;
-		typedef std::list<unsigned int> List;
 		typedef std::vector<std::pair<unsigned int, unsigned int> > PairVector;
-		typedef std::list<std::pair<unsigned int, unsigned int> > PairList;
-		typedef std::list<unsigned int>::iterator Iter;
-		typedef std::list<unsigned int>::const_iterator ConstIter;
-		typedef std::list<std::pair<unsigned int, unsigned int> >::iterator PairIter;
-		typedef std::list<std::pair<unsigned int, unsigned int> >::const_iterator ConstPairIter;
 
+		typedef std::deque<unsigned int> Deque;
+		typedef std::deque<std::pair<unsigned int, unsigned int> > PairDeque;
 
 	private:
 		Vector _vector;
-		List _list;
+		Deque _deque;
 		long long _vectorTimer;
-		long long _listTimer;
+		long long _dequeTimer;
 
 		// Parsing
 		void parseInput(int ac, char** argv);
@@ -46,21 +42,18 @@ class PmergeMe
 		// Sorting std::vector
 		void mergeInsertionSort(Vector& vector);
 		PairVector groupPairs(const Vector& vector) const;
-		Vector groupLargest(const PairVector& pairs) const;
-		void insertSmallestPair(Vector& sorted, PairVector& pairs) const;
+		PairVector reorderPairs(const Vector& largest, const PairVector& pairs);
 		void insertRemaining(Vector& sorted, const PairVector& pairs) const;
-		size_t getInsertBound(const Vector& vector, unsigned int value) const;
 		size_t findInsertPosition(const Vector& list, unsigned int value, size_t right) const;
 		void handleStraggler(const Vector& vector, Vector& sorted) const;
 
-		// Sorting std::list
-		void mergeInsertionSort(std::list<unsigned int>& list);
-		PairList groupPairs(const List& list) const;
-		List groupLargest(const PairList& pairs) const;
-		void insertSmallestPair(List& sorted, PairList& pairs) const;
-		void insertRemaining(List& sorted, const PairList& pairs) const;
-		Iter findInsertPosition(List& list, unsigned int value) const;
-		void handleStraggler(const List& list, List& sorted) const;
+		// Sorting std::deque
+		void mergeInsertionSort(Deque& deque);
+		PairDeque groupPairs(const Deque& deque) const;
+		PairDeque reorderPairs(const Deque& largest, const PairDeque& pairs);
+		void insertRemaining(Deque& sorted, const PairDeque& pairs) const;
+		size_t findInsertPosition(const Deque& list, unsigned int value, size_t right) const;
+		void handleStraggler(const Deque& deque, Deque& sorted) const;
 
 		template <typename T>
 		bool isSorted(T& container) const
